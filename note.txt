@@ -1,0 +1,6 @@
+npm create vite@latest
+npm install tailwindcss @tailwindcss/vite: 
+configure with vite and import tailwind in css check steps:
+https://tailwindcss.com/docs/installation/using-vite
+
+icons: npm install lucide-react
