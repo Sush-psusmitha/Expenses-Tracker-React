@@ -3,8 +3,7 @@ import React from 'react'
 import Toast from './components/Toast'
 import Header from './components/Header'
 import SummaryCard from './components/SummaryCard'
-
-
+import AddExpensesForm from './components/AddExpensesForm'
 
 const App = () => {
   return (
@@ -17,6 +16,14 @@ const App = () => {
        <Header/>
        {/* Summary card */}
        <SummaryCard/>
+         
+         <div className='grid grid-cols-1 xl:grid-cols-5 gap-8'>
+         {/* Add Expenses Form */}
+         <div className='xl:col-span-2'>
+        <AddExpensesForm/>
+         </div>
+         </div>
+
      </div>
 
     </div>
