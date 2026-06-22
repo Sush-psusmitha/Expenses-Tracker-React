@@ -1,7 +1,16 @@
 import { TrendingDown, Plus, TrendingUp, AlertCircle } from 'lucide-react'
-import React from 'react'
+import React, { useState } from 'react'
 
-const AddExpensesForm = () => {
+const AddExpensesForm = ({
+  formData, 
+  setFormData,
+  editingId, 
+  setEditingId, 
+  expenses, 
+  setExpenses, 
+  showToast
+  }) => {
+  const [errors, setErrors] = useState({})
   return (
     <div className='bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white shadow-2xl'>
       <h2>
@@ -11,7 +20,9 @@ const AddExpensesForm = () => {
          </div>
 
          {/* conditional Rendering Text */}
-         Add New Enter
+         {
+          editingId ? "Edit Entry" : "Add New Entry"
+         }
        </div>
       </h2>
 
@@ -21,15 +32,27 @@ const AddExpensesForm = () => {
             Entry Type
             </label>
             <div className='flex  space-x-4'>
-             <label className={`flex-1 flex  items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all`}>
+             <label className={`flex-1 flex  items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                formData.type === "expense"
+                 ?  "border-red-500 bg-red-500/10" 
+                 : "border-transparent hover:border-gray-600 hover:bg-gray-800/50"
+               }`}>
 
-             <input type="radio" name = "type" className="sr-only" />
+             <input 
+             type="radio" 
+             name = "type" 
+             className="sr-only" 
+             value="expense" />
              <TrendingDown className='w-5 h-6 mr-2' />
-             <span className='font-medium'>Expenses</span>
+             <span className='font-medium'>Expense</span>
              </label>
-              <label className={`flex-1 flex  items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all`}>
+              <label className={`flex-1 flex  items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all ${
+                formData.type === "income"
+                ? "border-green-500 bg-green-500/10"
+                : "border-transparent hover:border-gray-600 hover:bg-gray-800/50"
+              } `}>
 
-             <input type="radio" name = "type" className="sr-only" />
+             <input type="radio" name = "type" className="sr-only" value="Income" />
              <TrendingUp className='w-5 h-6 mr-2' />
              <span className='font-medium'>Income</span>
              </label>
@@ -41,6 +64,7 @@ const AddExpensesForm = () => {
             Description
             </label>
            <input type='text' 
+           value={formData.description}
            placeholder='What is this for' 
            className={`w-full px-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white placeholder-gray-500 focus:ring-2 focus-purple-500 focus:border-purple-500 transition-all`}/>
 
