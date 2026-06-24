@@ -18,22 +18,22 @@ const Toast = ({Toast, RemoveToast}) => {
           : "bg-yellow-900/80 border-yellow-700 text-yellow-100"
          } `}>
         {/* conditional rendering */}
-        {Toast.type === "success" && (
+        {t.type === "success" && (
           <Check  className = "w-5 h-5 mr-2 shrink-0" />)}  
 
         {/* conditional rendering */}
-        {Toast.type === "error" && (
+        {t.type === "error" && (
           <AlertCircle  className = "w-5 h-5 mr-2 shrink-0" />
         )}
 
         {/* conditional rendering */}
-        {Toast.type === "info" && (
+        {t.type === "info" && (
             <AlertCircle  className = "w-5 h-5 mr-2 shrink-0" />
           )
         }
 
 
-        <span className='mr-2'>{Toast.message}</span>
+        <span className='mr-2'>{t.message}</span>
         <button className='ml-auto text-gray-300 hover:text-white transition-colors' 
           onClick={() => RemoveToast(t.id)}
         >

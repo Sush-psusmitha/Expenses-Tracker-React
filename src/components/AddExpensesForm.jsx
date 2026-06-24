@@ -1,6 +1,6 @@
 import { TrendingDown, Plus, TrendingUp, AlertCircle } from 'lucide-react'
 import React, { useState } from 'react'
-
+import { categories } from '../util/category';
 const AddExpensesForm = ({
   formData, 
   setFormData,
@@ -10,7 +10,68 @@ const AddExpensesForm = ({
   setExpenses, 
   showToast
   }) => {
-  const [errors, setErrors] = useState({})
+  const [errors, setErrors] = useState({}); 
+
+  const validateForm = () =>{
+    const newErrors = {}; 
+
+    if(!formData.description.trim()){
+      newErrors.description = "Description is required "; 
+    }
+
+    if(!formData.amount || parseFloat(formData.amount) <= 0){
+      newErrors.amount = "Amount must be greater than 0"
+    }
+
+    if(!formData.category){
+      newErrors.category = "Category is required"; 
+    }
+    if(!formData.date){
+      newErrors.data = "Data is required"
+    }
+
+    setErrors(newErrors); 
+    return Object.keys(newErrors).length === 0;
+  };
+
+const handleSubmit = () => {
+  console.log("Submit clicked");
+
+  if (!validateForm()) {
+    console.log("Validation Failed");
+    return;
+  }
+
+  console.log("Validation Passed");
+
+  const expensesData = {
+    ...formData,
+    amount: parseFloat(formData.amount),
+    id: editingId || Date.now(),
+  };
+
+  console.log("Adding:", expensesData);
+
+  setExpenses((prev) => {
+    const updated = [...prev, expensesData];
+    console.log("Updated Expenses:", updated);
+    return updated;
+  });
+};
+
+const cancelEdit = () => {
+  setEditingId(null);
+  setFormData({
+       description: "", 
+       amount: "", 
+       category: "", 
+       date: "", 
+       type: "expense", 
+  });
+  setErrors({}); 
+  showToast("Edit cancelled", "info");
+
+}
   return (
     <div className='bg-white/5 backdrop-blur-lg rounded-3xl p-8 border border-white shadow-2xl'>
       <h2>
@@ -35,24 +96,40 @@ const AddExpensesForm = ({
              <label className={`flex-1 flex  items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                 formData.type === "expense"
                  ?  "border-red-500 bg-red-500/10" 
-                 : "border-transparent hover:border-gray-600 hover:bg-gray-800/50"
+                 : "border-gray-600 bg-gray-800/50 text-gray-400 hover:border-gray-600 "
                }`}>
 
              <input 
              type="radio" 
              name = "type" 
              className="sr-only" 
+             checked = {formData.type === "expense"}
+             onChange={(e) => {
+              setFormData({...formData, type: e.target.value, category: ""}); 
+              setErrors({});
+             }
+             }
              value="expense" />
              <TrendingDown className='w-5 h-6 mr-2' />
              <span className='font-medium'>Expense</span>
              </label>
               <label className={`flex-1 flex  items-center justify-center p-4 rounded-2xl border-2 cursor-pointer transition-all ${
                 formData.type === "income"
-                ? "border-green-500 bg-green-500/10"
-                : "border-transparent hover:border-gray-600 hover:bg-gray-800/50"
+                ? "border-green-500 bg-green-500/20 text-green-300"
+                : "border-gray-600 bg-gray-800/50 text-gray-400 hover:border-gray-500 "
               } `}>
 
-             <input type="radio" name = "type" className="sr-only" value="Income" />
+             <input type="radio"
+              name = "type" 
+              checked = {formData.type === "income"}
+             onChange={(e) => {
+              setFormData({...formData, type: e.target.value, category: ""}); 
+              setErrors({});
+             }
+
+             }
+              className="sr-only"
+               value="income" />
              <TrendingUp className='w-5 h-6 mr-2' />
              <span className='font-medium'>Income</span>
              </label>
@@ -65,13 +142,27 @@ const AddExpensesForm = ({
             </label>
            <input type='text' 
            value={formData.description}
+            onChange={(e) => {
+  setFormData({
+    ...formData,
+    description: e.target.value,
+  });
+
+  if (errors.description) {
+    setErrors({ ...errors, description: "" });
+  }
+}}
            placeholder='What is this for' 
            className={`w-full px-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white placeholder-gray-500 focus:ring-2 focus-purple-500 focus:border-purple-500 transition-all`}/>
 
           {/* conditional Rendering */}
-           <p className='text-red-400 text-sm mt-2 flex items-center'>
+           {
+            errors.description && (
+              <p className='text-red-400 text-sm mt-2 flex items-center'>
             <AlertCircle className='w-4 h-4 mr-1'/>
-            Error Message</p>
+            {errors.description}</p>
+            )
+           }
            
         </div>
         <div>
@@ -83,54 +174,120 @@ const AddExpensesForm = ({
 
                 <input
                  type='number'
+                 value={formData.amount}
+                  onChange={(e) => {
+              setFormData({
+                ...formData, 
+                amount: e.target.value,
+              }); 
+             if(errors.amount)
+              setErrors({...errors, amount: ""})
+             }}
                  step="0.01"
-                 className={`w-full pl-12 pr-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus: border-purple-500 transition-all `}
+                 className={`w-full pl-12 pr-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus: border-purple-500 transition-all
+                  ${
+                    errors.amount ? "border-red-500" : "border-gray-600 focus:border-purple-500"
+                  } `}
                  placeholder='0.00'
                 />
               </div>
 
               {/* conditional rendering */}
-               <p className='text-red-400 text-sm mt-2 flex items-center'>
+               {
+                errors.amount && (
+            <p className='text-red-400 text-sm mt-2 flex items-center'>
             <AlertCircle className='w-4 h-4 mr-1'/>
-            Error Message</p>                         
+            {errors.amount}</p>
+                )
+               }                         
         </div>
         <div>
              <label className='block text-gray-300 text-sm font-semibold mb-3 uppercase tracking-wide'>
               Category
             </label>
-            <select className={`w-full px-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white ring-0 focus:ring-purple-500 focus:border-purple-500 transition-all`}>
+            <select value={formData.category}
+              onChange={(e) => {
+              setFormData({
+                ...formData, 
+                category: e.target.value
+              }); 
+             if(errors.category)
+              setErrors({...errors, category: ""})
+             }}
+            className={`w-full px-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white ring-0 focus:ring-purple-500 focus:border-purple-500 transition-all
+             ${
+              errors.category ? "border-red-500" : "border-gray-600 focus:border-purple-500"
+             }
+            `}>
             <option className=''>Choose Category</option>
-            <p className='text-red-400 text-sm mt-2 flex items-center'>
-            <AlertCircle className='w-4 h-4 mr-1'/>
-            Error Message</p> 
+             {categories[formData.type].map((cat)=>(
+              <option key={cat} value = {cat} className='bg-gray-900' >
+               {cat}
+              </option>
+             ))}
             </select>
+           {
+            errors.category && (
+               <p className='text-red-400 text-sm mt-2 flex items-center'>
+            <AlertCircle className='w-4 h-4 mr-1'/>
+            {errors.category}</p> 
+            )
+           }
+           
         </div>
 
         <div>
              <label className='block text-gray-300 text-sm font-semibold mb-3 uppercase tracking-wide'>
               Date
             </label>
-            <input type='date' className={`w-full px-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all`} />
+            <input type='date' 
+            value={formData.date}
+              onChange={(e) => {
+  setFormData({
+    ...formData,
+    date: e.target.value,
+  });
+
+  if (errors.date) {
+    setErrors({ ...errors, date: "" });
+  }
+}}
+            className={`w-full px-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white focus:ring-2 focus:ring-purple-500 focus:border-purple-500 transition-all ${
+               errors.date ? "border-red-500" : "focus:border-purple-500"
+            }`} />
 
             {/* Conditional Rendering */}
-             <p className='text-red-400 text-sm mt-2 flex items-center'>
+             {
+              errors.date && (
+            <p className='text-red-400 text-sm mt-2 flex items-center '>
             <AlertCircle className='w-4 h-4 mr-1'/>
-            Error Message</p>
+            {errors.date}</p>
+              )
+             }
         </div>
 
         <div>
-           <button type='button' className='flex-1 bg-linear-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-2xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105'>
+           <button 
+           type='button'
+            className='flex-1 bg-linear-to-r from-purple-600 to-pink-600 text-white py-4 px-6 rounded-2xl font-semibold hover:from-purple-700 hover:to-pink-700 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105' 
+            onClick={handleSubmit}
+            >
             {/*  conditional rendering text */}
-            Add Entry
+            {editingId ? "Update Entry" : "Add Entry"}
            </button>
 
 {/* conditional rendering */}
+           {
+            editingId && (
            <button 
+           onClick={cancelEdit}
            type='button' 
-           className='px-6 py-4 border-2 border-gray-600 text-gray-300 rounded-2xl hover:bg-gray-800/50 hover:border-gray-500 transition-all duration-200'>
-            {/*  conditional rendering text */}
+           className='px-6 py-4 border-2 border-gray-600 text-gray-300 rounded-2xl hover:bg-gray-800/50 hover:border-gray-500 transition-all duration-200'
+           >
             Cancel
            </button>
+            )
+           }
         </div>
       </div>
     </div>

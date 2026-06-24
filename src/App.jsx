@@ -9,12 +9,13 @@ import ExpensesList from './components/ExpensesList'
 import { Type } from 'lucide-react'
 
 const App = () => {
-  const [formData, setFormData]  = useState({
-    description : "", 
-    amount: "", 
-    category: "", 
-    type: "income",
-  });
+  const [formData, setFormData] = useState({
+  description: "",
+  amount: "",
+  category: "",
+  date: "",
+  type: "income",
+});
   const [editingId, setEditingId] = useState(null); 
   const [expenses,setExpenses] = useState([]); 
   const [filter,setFilter] = useState("all"); 
@@ -36,9 +37,9 @@ const App = () => {
   };
 
   //Calculate total income: 
-  const totalIncome = expenses
+const totalIncome = expenses
   .filter((exp) => exp.type === "income")
-  .reduce((acc,exp)=>acc + exp, 0);
+  .reduce((acc, exp) => acc + exp.amount, 0);
 
   //Total Expenses: 
   const totalExpenses = expenses
