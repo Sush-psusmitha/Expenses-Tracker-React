@@ -1,19 +1,19 @@
 import { AlertCircle, X,Check } from 'lucide-react'
 import React from 'react'
 
-const Toast = ({Toast, RemoveToast}) => {
+const Toast = ({toasts, removeToast}) => {
   return (
     <div className='fixed top-4 right-4 z-50 space-y-2'>
 
         {/* map method */}
-      {Toast.map((t)=>{
+      {toasts.map((t)=>{
        return(
          <div 
           key={t.id}
           className={`flex items-center p-4 rounded-lg shadow-lg backdrop-blur-sm border transform transition-all duration-300 ease-in-out  ${
-          Toast.type === "success"
+          t.type === "success"
           ? "bg-green-900/80 border-green-700 text-green-100" 
-          : Toast.type === "error"
+          : t.type === "error"
           ? "bg-red-900/80 border-red-700 text-red-100" 
           : "bg-yellow-900/80 border-yellow-700 text-yellow-100"
          } `}>

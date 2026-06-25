@@ -52,7 +52,7 @@ const totalIncome = expenses
   return (
     <div className='min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 p-4'>
     {/* Toast */}
-    <Toast Toast = {toast} RemoveToast = {RemoveToast} />
+   <Toast toasts={toast} removeToast={RemoveToast} />
      
      <div className='max-w-7xl mx-auto'>
        {/* Header */}
@@ -80,9 +80,9 @@ const totalIncome = expenses
          </div>
          <div className="xl:col-span-3">
           <div className='bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 shadow-2xl overflow-hidden'>
-           <FilterTab/>
+           <FilterTab filter={filter} setFilter = {setFilter} />
            {/* Expenses List */}
-           <ExpensesList/>
+           <ExpensesList />
           </div>
          </div>
          </div>

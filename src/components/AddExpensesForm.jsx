@@ -50,13 +50,18 @@ const handleSubmit = () => {
     id: editingId || Date.now(),
   };
 
-  console.log("Adding:", expensesData);
+  // console.log("Adding:", expensesData);
 
   setExpenses((prev) => {
     const updated = [...prev, expensesData];
-    console.log("Updated Expenses:", updated);
+    // console.log("Updated Expenses:", updated);
     return updated;
   });
+    showToast(
+    `${formData.type === "income" ? "Income" : "Expense"} added successfully`,
+    "success"
+  );
+  
 };
 
 const cancelEdit = () => {
@@ -153,7 +158,11 @@ const cancelEdit = () => {
   }
 }}
            placeholder='What is this for' 
-           className={`w-full px-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white placeholder-gray-500 focus:ring-2 focus-purple-500 focus:border-purple-500 transition-all`}/>
+            className={`w-full pl-12 pr-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus: border-purple-500 transition-all
+                  ${
+                    errors.amount ? "border-red-500" : "border-gray-600 focus:border-purple-500"
+                  } `}
+           />
 
           {/* conditional Rendering */}
            {
