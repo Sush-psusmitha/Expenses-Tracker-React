@@ -35,33 +35,35 @@ const AddExpensesForm = ({
   };
 
 const handleSubmit = () => {
-  console.log("Submit clicked");
-
   if (!validateForm()) {
-    console.log("Validation Failed");
     return;
   }
 
-  console.log("Validation Passed");
-
   const expensesData = {
     ...formData,
-    amount: parseFloat(formData.amount),
+    amount: Math.round(parseFloat(formData.amount) * 100) / 100,
     id: editingId || Date.now(),
   };
 
-  // console.log("Adding:", expensesData);
+  setExpenses((prev) =>
+    editingId
+      ? prev.map((exp) => (exp.id === editingId ? expensesData : exp))
+      : [...prev, expensesData]
+  );
 
-  setExpenses((prev) => {
-    const updated = [...prev, expensesData];
-    // console.log("Updated Expenses:", updated);
-    return updated;
-  });
-    showToast(
-    `${formData.type === "income" ? "Income" : "Expense"} added successfully`,
+  showToast(
+    `${formData.type === "income" ? "Income" : "Expense"} ${editingId ? "updated" : "added"} successfully`,
     "success"
   );
-  
+
+  setEditingId(null);
+  setFormData({
+    description: "",
+    amount: "",
+    category: "",
+    date: "",
+    type: formData.type,
+  });
 };
 
 const cancelEdit = () => {
@@ -110,7 +112,13 @@ const cancelEdit = () => {
              className="sr-only" 
              checked = {formData.type === "expense"}
              onChange={(e) => {
-              setFormData({...formData, type: e.target.value, category: ""}); 
+              setFormData({
+                description: "",
+                amount: "",
+                category: "",
+                date: "",
+                type: e.target.value,
+              });
               setErrors({});
              }
              }
@@ -128,7 +136,13 @@ const cancelEdit = () => {
               name = "type" 
               checked = {formData.type === "income"}
              onChange={(e) => {
-              setFormData({...formData, type: e.target.value, category: ""}); 
+              setFormData({
+                description: "",
+                amount: "",
+                category: "",
+                date: "",
+                type: e.target.value,
+              });
               setErrors({});
              }
 
@@ -186,12 +200,13 @@ const cancelEdit = () => {
                  value={formData.amount}
                   onChange={(e) => {
               setFormData({
-                ...formData, 
+                ...formData,
                 amount: e.target.value,
-              }); 
+              });
              if(errors.amount)
               setErrors({...errors, amount: ""})
              }}
+                 onWheel={(e) => e.currentTarget.blur()}
                  step="0.01"
                  className={`w-full pl-12 pr-6 py-4 bg-gray-800/50 border-2 rounded-2xl text-white placeholder-gray-500 focus:ring-2 focus:ring-purple-500 focus: border-purple-500 transition-all
                   ${

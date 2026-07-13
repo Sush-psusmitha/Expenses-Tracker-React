@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 
 import Toast from './components/Toast'
 import Header from './components/Header'
@@ -20,6 +20,22 @@ const App = () => {
   const [expenses,setExpenses] = useState([]); 
   const [filter,setFilter] = useState("all"); 
   const [toast,setToasts] = useState([]);
+
+
+
+useEffect(()=>{
+  const savedExpenses = JSON.parse(localStorage.getItem("expenses")); 
+  if(savedExpenses){
+    setExpenses(savedExpenses);
+  }
+},[])
+
+useEffect(()=>{
+   if(expenses.length > 0 ){
+    localStorage.setItem("expenses", JSON.stringify(expenses))
+   }
+},[expenses]);
+
 
 // toast notification logic
   const showToast = (message, type="success")=>{
@@ -49,11 +65,28 @@ const totalIncome = expenses
   const balance = totalIncome - totalExpenses;
 
   // filter expenses
-
   const filteredExpenses = expenses.filter((exp)=> {
     if(filter === "all") return true; 
     return exp.type === filter;
-  })
+  }); 
+
+  const handleEdit = (expense) => {
+    setFormData({
+          description: expense.description,
+    amount: expense.amount.toString(),
+    category: expense.category,
+    date: expense.date,
+    type: expense.type, 
+    }); 
+    setEditingId(expense.id); 
+    showToast("Entry Loaded for editing", "info");
+  }; 
+  const handleDelete = (id) => {
+    const expeseToDelete = expenses.find((exp)=>exp.id === id); 
+    setExpenses(expenses.filter((exp)=>exp.id != id));
+    showToast(`${expeseToDelete.type === "income" ? "income" : "Expense"} deleted successfully`, "error")
+
+  }
 
   return (
     <div className='min-h-screen bg-linear-to-br from-slate-900 via-purple-900 to-slate-900 p-4'>
@@ -88,7 +121,7 @@ const totalIncome = expenses
           <div className='bg-white/5 backdrop-blur-lg rounded-3xl border border-white/10 shadow-2xl overflow-hidden'>
            <FilterTab filter={filter} setFilter = {setFilter} />
            {/* Expenses List */}
-           <ExpensesList filteredExpenses = {filteredExpenses} />
+           <ExpensesList filteredExpenses = {filteredExpenses} handleEdit= {handleEdit} handleDelete={handleDelete} />
           </div>
          </div>
          </div>

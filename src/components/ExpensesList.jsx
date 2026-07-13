@@ -1,7 +1,7 @@
 import { Calendar, DollarSign, TrendingDown, TrendingUp, Tag, Edit2, Trash2 } from 'lucide-react'
 import React from 'react'
 
-const ExpensesList = ({filteredExpenses}) => {
+const ExpensesList = ({filteredExpenses,handleEdit,handleDelete}) => {
   return (
     <div className='p-8 max-h-96 overflow-y-auto'>
       {filteredExpenses.length === 0 ? (
@@ -35,7 +35,7 @@ const ExpensesList = ({filteredExpenses}) => {
                     {exp.category}
                   </span>
                   <span className='flex items-center'>
-                     <Calendar className='w-4 h-4 mr-2' />{new Date(exp.date).toLocaleDateString("en-IND", {
+                     <Calendar className='w-4 h-4 mr-2' />{new Date(exp.date).toLocaleDateString("en-US", {
                       year: "numeric", 
                       month: "short", 
                       day : "numeric",
@@ -46,15 +46,17 @@ const ExpensesList = ({filteredExpenses}) => {
            </div>
 
            <div className='flex items-center space-x-4'>
-             <span className={`font-bold text-2xl`}>
+             <span className={`font-bold text-2xl ${
+              exp.type === "income" ? "text-emerald-400" : "text-red-400"
+             }`}>
                {exp.type === "income" ? "+" : "-"} ${exp.amount.toFixed(2)}
              </span>
              <div className='flex space-x-2'>
-              <button className='p-3 text-gray-400 hover:text-blue-400 hover:bg-blue-500/20 rounded-xl transition-all duration-200'>
+              <button className='p-3 text-gray-400 hover:text-blue-400 hover:bg-blue-500/20 rounded-xl transition-all duration-200' onClick={() => handleEdit(exp)}>
                 <Edit2 className='w-5 h-5'/>
               </button>
               <button className='p-3 text-red-400 hover:text-red-400 hover:bg-red-500/20 rounded-xl transition-all duration-200'>
-                <Trash2 className='w-5 h-5'/>
+                <Trash2 className='w-5 h-5' onClick={()=> handleDelete(exp.id)}/>
               </button>
              </div>
            </div>
